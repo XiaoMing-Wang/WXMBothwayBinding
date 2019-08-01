@@ -11,7 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class WXMKVOObserveSignal;
-@class WXMKVOSubTrampoline;
+@class WXMKVOPropertyFollower;
 @class WXMKVOSelectorExecutor;
 @class WXMKVOBindChannel;
 @interface NSObject (WXMAddForKVO)
@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSMutableDictionary<NSString*, NSMutableArray*> *selectorDictionary;
 
 - (void)addSignal:(WXMKVOObserveSignal *)observeSignal keyPath:(NSString *)keyPath;
-- (void)addSubscrip:(WXMKVOSubTrampoline *)subTrampoline keyPath:(NSString *)keyPath;
+- (void)addSubscrip:(WXMKVOPropertyFollower *)subTrampoline keyPath:(NSString *)keyPath;
 - (void)addSelector:(WXMKVOSelectorExecutor *)selector keyPath:(NSString *)keyPath;
 - (void)addBindChannel:(WXMKVOBindChannel *)bindChannel keyPath:(NSString *)keyPath;
 

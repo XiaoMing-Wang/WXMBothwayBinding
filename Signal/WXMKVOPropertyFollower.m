@@ -5,15 +5,15 @@
 //  Created by edz on 2019/7/29.
 //  Copyright © 2019 wq. All rights reserved.
 //
-#import "WXMKVOSubTrampoline.h"
+#import "WXMKVOPropertyFollower.h"
 #import "WXMKVOObserveSignal.h"
 #import "NSObject+WXMAddForKVO.h"
 
-@interface WXMKVOSubTrampoline ()
+@interface WXMKVOPropertyFollower ()
 @property (nonatomic, weak) NSObject *target;
 @property (nonatomic, copy) NSString *keyPath;
 @end
-@implementation WXMKVOSubTrampoline
+@implementation WXMKVOPropertyFollower
 
 - (nullable instancetype)initWithTarget:(nullable id)target {
     if (!target) return nil;
@@ -41,10 +41,9 @@
     
     __weak typeof(self) weakSelf = self;
     return ^(id newVal) {
-        __strong __typeof(weakSelf) self = weakSelf;
-        
-        id target = self.target;
-        NSString *keyPath = self.keyPath;
+        __strong __typeof(weakSelf) strongSelf = weakSelf;
+        id target = strongSelf.target;
+        NSString *keyPath = strongSelf.keyPath;
         if (target && keyPath && newVal) [target setValue:newVal forKey:keyPath];
     };
     

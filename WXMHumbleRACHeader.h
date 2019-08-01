@@ -14,7 +14,7 @@
 #import "NSMutableArray+WXMAddForKVO.h"
 
 #import "WXMKVOObserveSignal.h"
-#import "WXMKVOSubTrampoline.h"
+#import "WXMKVOPropertyFollower.h"
 #import "WXMKVOSelectorExecutor.h"
 #import "WXMKVOBindChannel.h"
 

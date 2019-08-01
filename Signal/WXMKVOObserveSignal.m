@@ -13,7 +13,7 @@
 @interface WXMKVOObserveSignal ()
 @property (nonatomic, weak) NSObject *target;
 @property (nonatomic, copy) NSString *keyPath;
-@property (nonatomic, strong) NSMutableArray *callbackArray;
+@property (nonatomic, strong) NSMutableArray <KVOCallBack>*callbackArray;
 @end
 
 @implementation WXMKVOObserveSignal
@@ -64,7 +64,6 @@
         [array kvo_setObserver:target keyPath:keyPath];
     }
     WXMPreventCrashEnd
-    
     return self;
 }
 
@@ -87,7 +86,7 @@
     }
 }
 
-- (NSMutableArray *)callbackArray {
+- (NSMutableArray<KVOCallBack> *)callbackArray {
     if (!_callbackArray) _callbackArray = @[].mutableCopy;
     return _callbackArray;
 }

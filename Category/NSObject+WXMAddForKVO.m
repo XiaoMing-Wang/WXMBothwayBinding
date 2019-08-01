@@ -11,7 +11,7 @@
 #import <objc/runtime.h>
 #import "NSObject+WXMAddForKVO.h"
 #import "WXMKVOObserveSignal.h"
-#import "WXMKVOSubTrampoline.h"
+#import "WXMKVOPropertyFollower.h"
 
 @implementation NSObject (WXMAddForKVO)
 @dynamic signDictionary;
@@ -81,7 +81,7 @@
     WXMPreventCrashEnd
 }
 
-- (void)addSubscrip:(WXMKVOSubTrampoline *)subTrampoline keyPath:(NSString *)keyPath {
+- (void)addSubscrip:(WXMKVOPropertyFollower *)subTrampoline keyPath:(NSString *)keyPath {
     WXMPreventCrashBegin
     
     NSMutableDictionary *dic = self.subscripDictionary;

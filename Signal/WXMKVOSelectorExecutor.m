@@ -28,9 +28,7 @@
 
 /** 点语法 */
 - (void)setObject:(WXMKVOObserveSignal *)signal forKeyedSubscript:(NSString *)keyPath {
-    
     WXMPreventCrashBegin
-    
     
     /** A对象强引用 WXMKVOSubscriptingTrampoline 否则subscribeBlock被释放了 */
     if (self.target) [self.target addSelector:self keyPath:keyPath];
@@ -39,7 +37,6 @@
     if (signal && keyPath && self.target) [signal subscribeNext:self.subscribeBlock];
     
     WXMPreventCrashEnd
-    
 }
 
 #pragma clang diagnostic push
@@ -52,10 +49,9 @@
     
     __weak typeof(self) weakSelf = self;
     return ^(id newVal) {
-        __strong __typeof(weakSelf) self = weakSelf;
-        
-        id target = self.target;
-        SEL selector = NSSelectorFromString(self.selector);
+        __strong __typeof(weakSelf) strongSelf = weakSelf;
+        id target = strongSelf.target;
+        SEL selector = NSSelectorFromString(strongSelf.selector);
         if (target && [target respondsToSelector:selector]) {
             [target performSelector:selector];
         }

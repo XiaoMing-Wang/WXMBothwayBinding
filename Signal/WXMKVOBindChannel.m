@@ -33,6 +33,8 @@
 - (void)createFollowingTerminal {
     __weak id target = self.target;
     NSString *keyPath = self.keyPath;
+    
+    /** signal不绑定在target上 由BindChannel强持有signal */
     _followingTerminal = [[WXMKVOObserveSignal alloc] initWeakWithTarget:target keyPath:keyPath];
     [_followingTerminal subscribeNext:self.subscribeBlock];
 }
@@ -42,12 +44,13 @@
     
     __weak typeof(self) weakSelf = self;
     return ^(id newVal) {
-        __strong __typeof(weakSelf) self = weakSelf;
         
-        id target = self.target;
-        NSString *keyPath = self.keyPath;
+        __strong __typeof(weakSelf) strongSelf = weakSelf;
+        id target = strongSelf.target;
+        NSString *keyPath = strongSelf.keyPath;
         if (![keyPath hasPrefix:@"_"]) keyPath = [@"_" stringByAppendingString:keyPath];
         
+        /** 修改_不会触发kvo */
         const char *ivarKey = [keyPath UTF8String];
         Ivar ivar = class_getInstanceVariable([target class], ivarKey);
         if (target && ivar && newVal) {

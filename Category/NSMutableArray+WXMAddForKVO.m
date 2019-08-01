@@ -7,18 +7,18 @@
 //
 #import <objc/runtime.h>
 #import "NSMutableArray+WXMAddForKVO.h"
-
+#import "WXMHumbleRACMacro.h"
 
 static char kvo_observerKey;
 static char kvo_propertyKey;
 @implementation NSMutableArray (WXMAddForKVO)
 
 - (void)kvo_setObserver:(id)observer keyPath:(NSString *)keyPath {
-    @try {
-        NSString *proper = keyPath;
-        objc_setAssociatedObject(self, &kvo_observerKey, observer, OBJC_ASSOCIATION_ASSIGN);
-        objc_setAssociatedObject(self, &kvo_propertyKey, proper, OBJC_ASSOCIATION_COPY_NONATOMIC);
-    } @catch (NSException *exception) {} @finally {};
+    WXMPreventCrashBegin
+    NSString *proper = keyPath;
+    objc_setAssociatedObject(self, &kvo_observerKey, observer, OBJC_ASSOCIATION_ASSIGN);
+    objc_setAssociatedObject(self, &kvo_propertyKey, proper, OBJC_ASSOCIATION_COPY_NONATOMIC);
+    WXMPreventCrashEnd
 }
 
 - (void)kvo_addObject:(id)anObject {
