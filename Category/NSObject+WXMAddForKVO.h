@@ -36,6 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
 /** 删除所有 */
 - (void)removeObserverBlocks;
 
+/** 判断对象 */
+- (BOOL)isEqualValue:(id)object;
 @end
 
 NS_ASSUME_NONNULL_END

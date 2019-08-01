@@ -31,7 +31,7 @@
     if (!keyPath || !signal) return;
     [self addObserver:signal
            forKeyPath:keyPath
-              options:NSKeyValueObservingOptionNew
+              options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
               context:NULL];
     
     WXMPreventCrashEnd
@@ -164,6 +164,24 @@
 
 - (void)setNilValueForKey:(NSString *)key {}
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key {}
+- (BOOL)isEqualValue:(id)object {
+    if (self == object) return YES;
+    if ([self isKindOfClass:NSString.class] &&
+        [object isKindOfClass:NSString.class]) {
+        NSString *aString = (NSString *)self;
+        NSString *bString = (NSString *)object;
+        return [aString isEqualToString:bString];
+    }
+    
+    if ([self isKindOfClass:NSNumber.class] &&
+        [object isKindOfClass:NSNumber.class]) {
+        NSNumber *aNumber = (NSNumber *)self;
+        NSNumber *bNumber= (NSNumber *)object;
+        return (aNumber.floatValue == bNumber.floatValue);
+    }
+        
+    return NO;
+}
 
 - (void)__kvoTargetDealloc {
     [self removeObserverBlocks];

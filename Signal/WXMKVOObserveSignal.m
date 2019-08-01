@@ -11,12 +11,41 @@
 #import "NSMutableArray+WXMAddForKVO.h"
 
 @interface WXMKVOObserveSignal ()
+@property (nonatomic, assign) BOOL equalValue;
+@property (nonatomic, assign) NSInteger sendCount;
+
 @property (nonatomic, weak) NSObject *target;
 @property (nonatomic, copy) NSString *keyPath;
 @property (nonatomic, strong) NSMutableArray <KVOCallBack>*callbackArray;
 @end
 
 @implementation WXMKVOObserveSignal
+
+- (instancetype)initWithTarget:(__weak NSObject *)target keyPath:(NSString *)keyPath {
+    self = [self initWeakWithTarget:target keyPath:keyPath];
+    if (target && keyPath) [target addSignal:self keyPath:keyPath];
+    
+    return self;
+}
+
+- (instancetype)initWeakWithTarget:(__weak NSObject *)target keyPath:(NSString *)keyPath {
+    if (target == nil || keyPath == nil) return nil;
+    if (self = [super init])  {
+        self.sendCount = 0;
+        self.target = target;
+        self.keyPath = keyPath.copy;
+        if (target && keyPath) [target addObserverBlockForKeyPath:keyPath signal:self];
+    }
+    
+    WXMPreventCrashBegin
+    id object = [target valueForKey:keyPath];
+    if ([object isKindOfClass:NSMutableArray.class] && target && object) {
+        NSMutableArray *array = (NSMutableArray *) object;
+        [array kvo_setObserver:target keyPath:keyPath];
+    }
+    WXMPreventCrashEnd
+    return self;
+}
 
 /** 监听调用 */
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -37,34 +66,18 @@
     id newVal = [change objectForKey:NSKeyValueChangeNewKey];
     if (newVal == [NSNull null]) newVal = nil;
     
+    WXMPreventCrashBegin
+    self.equalValue = ([oldVal isEqualValue:newVal]);
+    [self sendSignal:newVal];
+    WXMPreventCrashEnd
+}
+
+/** 发出 */
+- (void)sendSignal:(id)newVal {
     for (KVOCallBack callback in self.callbackArray) {
+        self.sendCount = self.sendCount + 1;
         if (callback) callback(newVal);
     }
-}
-
-- (instancetype)initWithTarget:(__weak NSObject *)target keyPath:(NSString *)keyPath {
-    self = [self initWeakWithTarget:target keyPath:keyPath];
-    if (target && keyPath) [target addSignal:self keyPath:keyPath];
-    
-    return self;
-}
-
-- (instancetype)initWeakWithTarget:(__weak NSObject *)target keyPath:(NSString *)keyPath {
-    if (target == nil || keyPath == nil) return nil;
-    if (self = [super init])  {
-        self.target = target;
-        self.keyPath = keyPath.copy;
-        if (target && keyPath) [target addObserverBlockForKeyPath:keyPath signal:self];
-    }
-    
-    WXMPreventCrashBegin
-    id object = [target valueForKey:keyPath];
-    if ([object isKindOfClass:NSMutableArray.class] && target && object) {
-        NSMutableArray *array = (NSMutableArray *) object;
-        [array kvo_setObserver:target keyPath:keyPath];
-    }
-    WXMPreventCrashEnd
-    return self;
 }
 
 /** 订阅 */
@@ -86,12 +99,82 @@
     }
 }
 
+/** 包装信号 */
+- (WXMKVOObserveSignal *)map:(id (^)(id newVal))wrap {
+    WXMPreventCrashBegin
+    
+    WXMKVOObserveSignal *wrapSignal = [[WXMKVOObserveSignal alloc] init];
+    
+    [self subscribeNext:^(id newVal) {
+        [wrapSignal sendSignal:wrap(newVal)];
+    }];
+    return wrapSignal;
+    
+    WXMPreventCrashEnd
+}
+
+/** 过滤 */
+- (WXMKVOObserveSignal *)filter:(BOOL (^)(id newVal))wrap {
+    WXMPreventCrashBegin
+    
+    WXMKVOObserveSignal *filterSignal = [[WXMKVOObserveSignal alloc] init];
+    [self subscribeNext:^(id newVal) {
+        
+        BOOL conversionObj = wrap(newVal);
+        if (conversionObj) {
+            [filterSignal sendSignal:newVal];
+        }
+        
+    }];
+    return filterSignal;
+    
+    WXMPreventCrashEnd
+}
+
+/** 跳跃 */
+- (WXMKVOObserveSignal *)skip:(NSInteger)skipCount {
+    WXMPreventCrashBegin
+    
+    WXMKVOObserveSignal *skipSignal = [[WXMKVOObserveSignal alloc] init];
+    
+    __weak typeof(self) weakSelf = self;
+    [self subscribeNext:^(id newVal) {
+        
+        __strong __typeof(weakSelf) strongSelf = weakSelf;
+        if (skipCount < strongSelf.sendCount) {
+            [skipSignal sendSignal:newVal];
+        }
+        
+    }];
+    return skipSignal;
+    
+    WXMPreventCrashEnd
+}
+
+/** 变化 */
+- (WXMKVOObserveSignal *)distinctUntilChanged {
+    WXMPreventCrashBegin
+    
+    WXMKVOObserveSignal *changeSignal = [[WXMKVOObserveSignal alloc] init];
+    
+    __weak typeof(self) weakSelf = self;
+    [self subscribeNext:^(id newVal) {
+        
+        __strong __typeof(weakSelf) strongSelf = weakSelf;
+        if (strongSelf.equalValue == NO) {
+            [changeSignal sendSignal:newVal];
+        }
+        
+    }];
+    
+    return changeSignal;
+    
+    WXMPreventCrashEnd
+}
+
 - (NSMutableArray<KVOCallBack> *)callbackArray {
     if (!_callbackArray) _callbackArray = @[].mutableCopy;
     return _callbackArray;
 }
 
-- (void)dealloc {
-    /** NSLog(@"%@ 释放", NSStringFromClass(self.class)); */
-}
 @end

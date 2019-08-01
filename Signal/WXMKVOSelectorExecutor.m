@@ -49,12 +49,14 @@
     
     __weak typeof(self) weakSelf = self;
     return ^(id newVal) {
+        
         __strong __typeof(weakSelf) strongSelf = weakSelf;
         id target = strongSelf.target;
         SEL selector = NSSelectorFromString(strongSelf.selector);
         if (target && [target respondsToSelector:selector]) {
             [target performSelector:selector];
         }
+        
     };
     
     WXMPreventCrashEnd

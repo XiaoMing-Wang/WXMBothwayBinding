@@ -23,7 +23,19 @@ NS_ASSUME_NONNULL_BEGIN
 /** 订阅 */
 - (void)subscribeNext:(KVOCallBack)callback;
 
-/** 信号合并 */
+/** 包装 */
+- (WXMKVOObserveSignal *)map:(id (^)(id newVal))wrap;
+
+/** 过滤 */
+- (WXMKVOObserveSignal *)filter:(BOOL (^)(id newVal))wrap;
+
+/** 跳跃 */
+- (WXMKVOObserveSignal *)skip:(NSInteger)skipCount;
+
+/** 判断变化 */
+- (WXMKVOObserveSignal *)distinctUntilChanged;
+
+/** 合并 */
 - (void)combineSignal:(WXMKVOObserveSignal *)otherSignal;
 
 @end
