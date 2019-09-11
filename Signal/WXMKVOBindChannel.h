@@ -19,8 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 @class WXMKVOObserveSignal;
 @interface WXMKVOBindChannel : NSObject
 
-@property (nonatomic, strong) WXMKVOObserveSignal *followingTerminal;
-
 - (instancetype)initWithTarget:(__weak NSObject *)target keyPath:(NSString *)keyPath;
 
 /** 点语法 */

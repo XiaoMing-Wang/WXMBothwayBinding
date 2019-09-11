@@ -4,26 +4,20 @@
 //
 //  Created by edz on 2019/7/26.
 //  Copyright © 2019 wq. All rights reserved.
-//
-/** key1-@[sign1, sign2] */
-/** key2-@[sign1, sign2] */
+
 #import <objc/objc.h>
 #import <objc/runtime.h>
 #import "NSObject+WXMAddForKVO.h"
 #import "WXMKVOObserveSignal.h"
 #import "WXMKVOPropertyFollower.h"
+#import "WXMKVOSelectorExecutor.h"
+#import "WXMKVOBindChannel.h"
 
 @implementation NSObject (WXMAddForKVO)
 @dynamic signDictionary;
 @dynamic subscripDictionary;
 @dynamic selectorDictionary;
 @dynamic channelDictionary;
-
-+ (void)load {
-    Method method1 = class_getInstanceMethod(self, NSSelectorFromString(@"dealloc"));
-    Method method2 = class_getInstanceMethod(self, @selector(__kvoTargetDealloc));
-    method_exchangeImplementations(method1, method2);
-}
 
 - (void)addObserverBlockForKeyPath:(NSString *)keyPath signal:(NSObject *)signal {
     WXMPreventCrashBegin
@@ -34,36 +28,7 @@
               options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
               context:NULL];
     
-    WXMPreventCrashEnd
-}
-
-- (void)removeObserverBlocksForKeyPath:(NSString*)keyPath {
-    WXMPreventCrashBegin
-    
-    if (!keyPath) return;
-    NSMutableDictionary *dictionary = self.signDictionary;
-    NSMutableArray *array = dictionary[keyPath];
-    [array enumerateObjectsUsingBlock: ^(id obj, NSUInteger idx, BOOL *stop) {
-        [self removeObserver:obj forKeyPath:keyPath];
-    }];
-    [dictionary removeObjectForKey:keyPath];
-    
-    WXMPreventCrashEnd
-}
-
-- (void)removeObserverBlocks {
-    WXMPreventCrashBegin
-    
-    NSMutableDictionary *targets = objc_getAssociatedObject(self, @selector(signDictionary));
-    if (targets.allKeys.count == 0 || !targets) return;
-    
-    [targets enumerateKeysAndObjectsUsingBlock: ^(NSString *key, NSArray *array, BOOL *stop) {
-        [array enumerateObjectsUsingBlock: ^(id obj, NSUInteger idx, BOOL *stop) {
-            [self removeObserver:obj forKeyPath:key];
-        }];
-    }];
-    [targets removeAllObjects];
-    
+    [self managerObserveSignalDealloc];
     WXMPreventCrashEnd
 }
 
@@ -123,6 +88,77 @@
     WXMPreventCrashEnd
 }
 
+- (void)removeObserverBlocks {
+    WXMPreventCrashBegin
+    
+    NSMutableDictionary *targets = objc_getAssociatedObject(self, @selector(signDictionary));
+    if (targets.allKeys.count == 0 || !targets) return;
+    [targets enumerateKeysAndObjectsUsingBlock: ^(NSString *key, NSArray *array, BOOL *stop) {
+        [array enumerateObjectsUsingBlock: ^(id obj, NSUInteger idx, BOOL *stop) {
+            [self removeObserver:obj forKeyPath:key];
+        }];
+    }];
+    [targets removeAllObjects];
+    
+    WXMPreventCrashEnd
+}
+
+- (void)removeObserverForKeyPath:(NSString *)keyPath {
+    WXMPreventCrashBegin
+    
+    if (!keyPath) return;
+    NSMutableDictionary *targets = objc_getAssociatedObject(self, @selector(signDictionary));
+    if (targets.allKeys.count == 0 || !targets) return;
+    NSMutableArray *array = [[targets objectForKey:keyPath] mutableCopy];
+    [array enumerateObjectsUsingBlock: ^(id obj, NSUInteger idx, BOOL *stop) {
+        [self removeObserver:obj forKeyPath:keyPath];
+    }];
+    [targets removeObjectForKey:keyPath];
+    
+    WXMPreventCrashEnd
+    
+}
+
+/** 手动触发信号 */
++ (void)manualTriggerObserveSignal:(NSObject *)object keyPath:(NSString *)keyPath {
+    WXMPreventCrashBegin
+    
+    NSMutableDictionary *dic = object.signDictionary;
+    NSMutableArray <WXMKVOObserveSignal *>*array = dic[keyPath];
+    id newVal = [object valueForKey:keyPath];
+    [array enumerateObjectsUsingBlock:^(WXMKVOObserveSignal *obj, NSUInteger idx, BOOL *stop) {
+        [obj manualTriggerSignal:newVal];
+    }];
+    
+    WXMPreventCrashEnd
+}
+
+/** 替换dealloc提前释放掉servicer */
+- (void)managerObserveSignalDealloc {
+    WXMPreventCrashBegin
+    
+    __block SEL serviceDeallocSEL = NSSelectorFromString(@"observeSignalDealloc");
+    if ([self respondsToSelector:serviceDeallocSEL]) return;
+    
+    id serviceDealloc = ^(__unsafe_unretained id dependInstance) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+        if ([dependInstance respondsToSelector:serviceDeallocSEL] && dependInstance) {
+            [dependInstance removeObserverBlocks];
+            [dependInstance performSelector:serviceDeallocSEL];
+        }
+#pragma clang diagnostic pop
+    };
+    
+    Class class = [self class];
+    class_addMethod(class, serviceDeallocSEL, imp_implementationWithBlock(serviceDealloc), "v@:@");
+    Method deallocMethod = class_getInstanceMethod(class, NSSelectorFromString(@"dealloc"));
+    Method serviceMethod = class_getInstanceMethod(class, serviceDeallocSEL);
+    method_exchangeImplementations(deallocMethod, serviceMethod);
+    
+    WXMPreventCrashEnd
+}
 
 #pragma mark Lazy
 
@@ -179,13 +215,8 @@
         NSNumber *bNumber= (NSNumber *)object;
         return (aNumber.floatValue == bNumber.floatValue);
     }
-        
+    
     return NO;
-}
-
-- (void)__kvoTargetDealloc {
-    [self removeObserverBlocks];
-    [self __kvoTargetDealloc];
 }
 
 @end

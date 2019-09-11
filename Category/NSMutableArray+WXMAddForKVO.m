@@ -74,6 +74,8 @@ static char kvo_propertyKey;
 }
 
 - (void)kvo_listeningObserver:(void(^)(void))result {
+    WXMPreventCrashBegin
+    
     id observer = objc_getAssociatedObject(self, &kvo_observerKey);
     NSString *proper = objc_getAssociatedObject(self, &kvo_propertyKey);
     if (!observer || !proper) {
@@ -84,6 +86,7 @@ static char kvo_propertyKey;
     [observer willChangeValueForKey:proper];
     if (result) result();
     [observer didChangeValueForKey:proper];
+    WXMPreventCrashEnd
 }
 
 @end

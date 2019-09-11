@@ -14,6 +14,7 @@
 @interface WXMKVOBindChannel ()
 @property (nonatomic, weak) NSObject *target;
 @property (nonatomic, copy) NSString *keyPath;
+@property (nonatomic, strong) WXMKVOObserveSignal *followingTerminal;
 @end
 
 @implementation WXMKVOBindChannel
@@ -31,7 +32,7 @@
 }
 
 - (void)createFollowingTerminal {
-    __weak id target = self.target;
+    id target = self.target;
     NSString *keyPath = self.keyPath;
     
     /** signal不绑定在target上 由BindChannel强持有signal */
@@ -48,7 +49,9 @@
         __strong __typeof(weakSelf) strongSelf = weakSelf;
         id target = strongSelf.target;
         NSString *keyPath = strongSelf.keyPath;
-        if (![keyPath hasPrefix:@"_"]) keyPath = [@"_" stringByAppendingString:keyPath];
+        if (![keyPath hasPrefix:@"_"]) {
+            keyPath = [@"_" stringByAppendingString:keyPath];
+        }
         
         /** 修改_不会触发kvo */
         const char *ivarKey = [keyPath UTF8String];
@@ -73,7 +76,4 @@
     [selfSignal combineSignal:otherSignal];
 }
 
-- (void)dealloc {
-    /** NSLog(@"%@ 释放", NSStringFromClass(self.class)); */
-}
 @end

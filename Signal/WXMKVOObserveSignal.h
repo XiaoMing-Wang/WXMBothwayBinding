@@ -17,7 +17,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WXMKVOObserveSignal : NSObject
 
+/** 强引用 */
 - (instancetype)initWithTarget:(__weak NSObject *)target keyPath:(NSString *)keyPath;
+
+/** 弱引用 */
 - (instancetype)initWeakWithTarget:(__weak NSObject *)target keyPath:(NSString *)keyPath;
 
 /** 订阅 */
@@ -32,11 +35,20 @@ NS_ASSUME_NONNULL_BEGIN
 /** 跳跃 */
 - (WXMKVOObserveSignal *)skip:(NSInteger)skipCount;
 
-/** 判断变化 */
+/** 变化 */
 - (WXMKVOObserveSignal *)distinctUntilChanged;
 
-/** 合并 */
+/** 只能手动触发 */
+- (WXMKVOObserveSignal *)manualTrigger;
+
+/** 冷信号 订阅既发 */
+- (WXMKVOObserveSignal *)coldSignal;
+
+/** 合并信号 */
 - (void)combineSignal:(WXMKVOObserveSignal *)otherSignal;
+
+/** 触发 */
+- (void)manualTriggerSignal:(id)newVal;
 
 @end
 

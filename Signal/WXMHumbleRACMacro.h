@@ -554,4 +554,5 @@ wxmmetamacro_argcount(__VA_ARGS__)) \
 #define WXMPreventCrashEnd    } @catch (NSException *exception) {} @finally {}
 
 typedef void (^KVOCallBack)(id newVal);
+
 #endif /* WXMKVOObjectMacro_h */

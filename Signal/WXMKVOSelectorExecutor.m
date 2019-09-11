@@ -14,7 +14,6 @@
 @property (nonatomic, weak) NSObject *target;
 @property (nonatomic, copy) NSString *selector;
 @end
-
 @implementation WXMKVOSelectorExecutor
 
 - (instancetype)initWithTarget:(__weak NSObject *)target selector:(NSString *)selector {
@@ -56,7 +55,6 @@
         if (target && [target respondsToSelector:selector]) {
             [target performSelector:selector];
         }
-        
     };
     
     WXMPreventCrashEnd
