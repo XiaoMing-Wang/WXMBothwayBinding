@@ -27,6 +27,7 @@
     
     /** 把WXMKVOObserveSignal绑定到监听对象上target 否则block被释放 */
     if (target && keyPath) [target addSignal:self keyPath:keyPath];
+    
     return self;
 }
 
@@ -216,6 +217,6 @@
 }
 
 - (void)dealloc {
-    NSLog(@"%@", @"dealloc");
+    /** NSLog(@"%@", @"dealloc"); */
 }
 @end

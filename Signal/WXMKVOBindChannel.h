@@ -5,7 +5,7 @@
 //  Created by edz on 2019/7/29.
 //  Copyright © 2019 wq. All rights reserved.
 //
-#define WXMBindChannel(TARGET, KEYPATH) \
+#define WRBindChannel(TARGET, KEYPATH) \
 \
 [[WXMKVOBindChannel alloc] initWithTarget:(TARGET) keyPath:@wxmkeypath(TARGET, KEYPATH)] \
 [@keypath(WXMKVOBindChannel.new, followingTerminal)]
@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class WXMKVOObserveSignal;
 @interface WXMKVOBindChannel : NSObject
+@property (nonatomic, strong) WXMKVOObserveSignal *followingTerminal;
 
 - (instancetype)initWithTarget:(__weak NSObject *)target keyPath:(NSString *)keyPath;
 

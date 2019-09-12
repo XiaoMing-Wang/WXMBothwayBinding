@@ -12,8 +12,7 @@
 #import "WXMHumbleRACMacro.h"
 #import "NSMutableArray+WXMAddForKVO.h"
 #import "WXMKVOObserveSignal.h"
-#import "WXMKVOPropertyFollower.h"
-#import "WXMKVOSelectorExecutor.h"
+#import "WXMKVOObserveFollower.h"
 #import "WXMKVOBindChannel.h"
 #import "NSObject+WXMAddForKVO.h"
 

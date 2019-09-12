@@ -14,7 +14,6 @@
 @interface WXMKVOBindChannel ()
 @property (nonatomic, weak) NSObject *target;
 @property (nonatomic, copy) NSString *keyPath;
-@property (nonatomic, strong) WXMKVOObserveSignal *followingTerminal;
 @end
 
 @implementation WXMKVOBindChannel
@@ -41,10 +40,10 @@
 }
 
 - (KVOCallBack)subscribeBlock {
-    WXMPreventCrashBegin
     
     __weak typeof(self) weakSelf = self;
     return ^(id newVal) {
+        WXMPreventCrashBegin
         
         __strong __typeof(weakSelf) strongSelf = weakSelf;
         id target = strongSelf.target;
@@ -54,6 +53,7 @@
         }
         
         /** 修改_不会触发kvo */
+        if (!target) return;
         const char *ivarKey = [keyPath UTF8String];
         Ivar ivar = class_getInstanceVariable([target class], ivarKey);
         if (target && ivar && newVal) {
@@ -61,9 +61,9 @@
                 object_setIvar(target, ivar, newVal);
             }
         }
+        
+        WXMPreventCrashEnd
     };
-    
-    WXMPreventCrashEnd
 }
 
 - (WXMKVOObserveSignal *)objectForKeyedSubscript:(NSString *)key {

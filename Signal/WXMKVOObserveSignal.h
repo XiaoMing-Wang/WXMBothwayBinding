@@ -6,7 +6,7 @@
 //  Copyright © 2019 wq. All rights reserved.
 //
 
-#define WXMObserve(TARGET, KEYPATH) \
+#define WRObserve(TARGET, KEYPATH) \
 [[WXMKVOObserveSignal alloc] initWithTarget:(TARGET) keyPath:@wxmkeypath(TARGET, KEYPATH)]
 
 /** 信号 */

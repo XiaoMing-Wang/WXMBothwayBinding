@@ -9,14 +9,12 @@
 #import <objc/runtime.h>
 #import "NSObject+WXMAddForKVO.h"
 #import "WXMKVOObserveSignal.h"
-#import "WXMKVOPropertyFollower.h"
-#import "WXMKVOSelectorExecutor.h"
+#import "WXMKVOObserveFollower.h"
 #import "WXMKVOBindChannel.h"
 
 @implementation NSObject (WXMAddForKVO)
 @dynamic signDictionary;
 @dynamic subscripDictionary;
-@dynamic selectorDictionary;
 @dynamic channelDictionary;
 
 - (void)addObserverBlockForKeyPath:(NSString *)keyPath signal:(NSObject *)signal {
@@ -46,7 +44,7 @@
     WXMPreventCrashEnd
 }
 
-- (void)addSubscrip:(WXMKVOPropertyFollower *)subTrampoline keyPath:(NSString *)keyPath {
+- (void)addSubscrip:(WXMKVOObserveFollower *)subTrampoline keyPath:(NSString *)keyPath {
     WXMPreventCrashBegin
     
     NSMutableDictionary *dic = self.subscripDictionary;
@@ -56,20 +54,6 @@
         dic[keyPath] = array;
     }
     [array addObject:subTrampoline];
-    
-    WXMPreventCrashEnd
-}
-
-- (void)addSelector:(WXMKVOSelectorExecutor *)selector keyPath:(NSString *)keyPath {
-    WXMPreventCrashBegin
-    
-    NSMutableDictionary *dic = self.selectorDictionary;
-    NSMutableArray *array = dic[keyPath];
-    if (!array) {
-        array = [NSMutableArray new];
-        dic[keyPath] = array;
-    }
-    [array addObject:selector];
     
     WXMPreventCrashEnd
 }
@@ -180,15 +164,6 @@
     return dictionary;
 }
 
-- (NSMutableDictionary<NSString*, NSMutableArray*> *)selectorDictionary {
-    NSMutableDictionary *dictionary = objc_getAssociatedObject(self, _cmd);
-    if (!dictionary) {
-        dictionary = @{}.mutableCopy;
-        objc_setAssociatedObject(self, _cmd, dictionary, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    }
-    return dictionary;
-}
-
 - (NSMutableDictionary<NSString*, NSMutableArray*> *)channelDictionary {
     NSMutableDictionary *dictionary = objc_getAssociatedObject(self, _cmd);
     if (!dictionary) {
@@ -219,4 +194,17 @@
     return NO;
 }
 
+/** 获取所有属性 */
++ (NSArray *)wxm_getFropertys {
+    unsigned int count = 0;
+    NSMutableArray *_arrayM = @[].mutableCopy;
+    objc_property_t *propertys = class_copyPropertyList([self class], &count);
+    for (int i = 0; i < count; i++) {
+        objc_property_t property = propertys[i]; /** 获得每一个属性 */
+        NSString *pro = [NSString stringWithCString:property_getName(property)
+                                           encoding:NSUTF8StringEncoding];
+        [_arrayM addObject:pro];
+    }
+    return _arrayM;
+}
 @end

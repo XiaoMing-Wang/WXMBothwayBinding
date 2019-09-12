@@ -6,8 +6,8 @@
 //  Copyright © 2019 wq. All rights reserved.
 //
 
-#define WXMFollow(TARGET, KEYPATH) \
-[[WXMKVOPropertyFollower alloc] initWithTarget:(TARGET)][@wxmkeypath(TARGET, KEYPATH)]
+#define WRFollow(TARGET, KEYPATH) \
+[[WXMKVOObserveFollower alloc] initWithTarget:(TARGET)][@wxmkeypath(TARGET, KEYPATH)]
 
 /** 监听 */
 #import "WXMHumbleRACMacro.h"
@@ -16,7 +16,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class WXMKVOObserveSignal;
-@interface WXMKVOPropertyFollower : NSObject
+@interface WXMKVOObserveFollower : NSObject
 
 - (nullable instancetype)initWithTarget:(nullable id)target;
 

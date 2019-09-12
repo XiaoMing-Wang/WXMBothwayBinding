@@ -5,15 +5,15 @@
 //  Created by edz on 2019/7/29.
 //  Copyright © 2019 wq. All rights reserved.
 //
-#import "WXMKVOPropertyFollower.h"
+#import "WXMKVOObserveFollower.h"
 #import "WXMKVOObserveSignal.h"
 #import "NSObject+WXMAddForKVO.h"
 
-@interface WXMKVOPropertyFollower ()
+@interface WXMKVOObserveFollower ()
 @property (nonatomic, weak) NSObject *target;
 @property (nonatomic, copy) NSString *keyPath;
 @end
-@implementation WXMKVOPropertyFollower
+@implementation WXMKVOObserveFollower
 
 - (nullable instancetype)initWithTarget:(nullable id)target {
     if (!target) return nil;
@@ -35,19 +35,33 @@
     WXMPreventCrashEnd
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+
 /** callback */
 - (KVOCallBack)subscribeBlock {
-    WXMPreventCrashBegin
-    
+       
     __weak typeof(self) weakSelf = self;
     return ^(id newVal) {
+        WXMPreventCrashBegin
+        
         __strong __typeof(weakSelf) strongSelf = weakSelf;
         id target = strongSelf.target;
         NSString *keyPath = strongSelf.keyPath;
-        if (target && keyPath && newVal) [target setValue:newVal forKey:keyPath];
+        
+        if (target && keyPath && newVal) {
+            if ([[target class].wxm_getFropertys containsObject:keyPath]) {
+                [target setValue:newVal forKey:keyPath];
+            } else {
+                SEL selector = NSSelectorFromString(keyPath);
+                if ([target respondsToSelector:selector]) [target performSelector:selector];
+            }
+        }
+        
+        WXMPreventCrashEnd
     };
-    
-    WXMPreventCrashEnd
 }
 
+#pragma clang diagnostic pop
 @end
