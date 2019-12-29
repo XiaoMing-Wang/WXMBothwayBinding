@@ -4,7 +4,7 @@
 //
 //  Created by edz on 2019/7/26.
 //  Copyright © 2019 wq. All rights reserved.
-
+#import <UIKit/UIKit.h>
 #import <objc/objc.h>
 #import <objc/runtime.h>
 #import "NSObject+WXMAddForKVO.h"
@@ -26,7 +26,9 @@
               options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
               context:NULL];
     
-    [self managerObserveSignalDealloc];
+    if ([[UIDevice currentDevice] systemVersion].floatValue < 11.0) {
+        [self managerObserveSignalDealloc];
+    }
     WXMPreventCrashEnd
 }
 

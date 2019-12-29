@@ -25,7 +25,7 @@
 - (instancetype)initWithTarget:(__weak NSObject *)target keyPath:(NSString *)keyPath {
     self = [self initWeakWithTarget:target keyPath:keyPath];
     
-    /** 把WXMKVOObserveSignal绑定到监听对象上target 否则block被释放 */
+    /** 把signal绑定到监听对象target上 否则block被释放 */
     if (target && keyPath) [target addSignal:self keyPath:keyPath];
     
     return self;
@@ -38,7 +38,7 @@
         self.target = target;
         self.keyPath = keyPath.copy;
         
-        /** self作为kvo的监听者 */
+        /** signal作为kvo的监听者 */
         if (target && keyPath) [target addObserverBlockForKeyPath:keyPath signal:self];
     }
     

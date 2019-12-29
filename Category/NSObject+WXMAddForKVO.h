@@ -26,8 +26,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSMutableDictionary<NSString*, NSMutableArray*> *subscripDictionary;
 @property (nonatomic, strong) NSMutableDictionary<NSString*, NSMutableArray*> *channelDictionary;
 
+/** 绑定信号 */
 - (void)addSignal:(WXMKVOObserveSignal *)observeSignal keyPath:(NSString *)keyPath;
+
+/** 绑定follower */
 - (void)addSubscrip:(WXMKVOObserveFollower *)subTrampoline keyPath:(NSString *)keyPath;
+
+/** 绑定双向通道 */
 - (void)addBindChannel:(WXMKVOBindChannel *)bindChannel keyPath:(NSString *)keyPath;
 
 /** 信号作为kvo响应者 */

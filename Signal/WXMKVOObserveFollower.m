@@ -55,7 +55,9 @@
                 [target setValue:newVal forKey:keyPath];
             } else {
                 SEL selector = NSSelectorFromString(keyPath);
-                if ([target respondsToSelector:selector]) [target performSelector:selector];
+                if ([target respondsToSelector:selector]) {
+                    [target performSelector:selector];
+                }
             }
         }
         
