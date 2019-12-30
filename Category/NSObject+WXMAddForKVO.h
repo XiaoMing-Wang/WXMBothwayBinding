@@ -49,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)manualTriggerObserveSignal:(NSObject *)object keyPath:(NSString *)keyPath;
 
 /** 获取所有属性 */
-+ (NSArray *)wxm_getFropertys;
++ (NSArray *)wc_getFropertys;
 @end
 
 NS_ASSUME_NONNULL_END

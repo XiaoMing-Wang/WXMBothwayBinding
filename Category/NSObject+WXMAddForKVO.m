@@ -197,7 +197,7 @@
 }
 
 /** 获取所有属性 */
-+ (NSArray *)wxm_getFropertys {
++ (NSArray *)wc_getFropertys {
     unsigned int count = 0;
     NSMutableArray *_arrayM = @[].mutableCopy;
     objc_property_t *propertys = class_copyPropertyList([self class], &count);
