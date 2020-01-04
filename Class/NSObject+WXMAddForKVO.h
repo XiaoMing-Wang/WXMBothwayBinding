@@ -50,6 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** 获取所有属性 */
 + (NSArray *)wc_getFropertys;
+
 @end
 
 NS_ASSUME_NONNULL_END
