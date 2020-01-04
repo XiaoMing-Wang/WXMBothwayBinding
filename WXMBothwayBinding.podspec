@@ -2,7 +2,7 @@ Pod::Spec.new do |s|
 
 
   s.name         = "WXMBothwayBinding"
-  s.version      = "0.0.1"
+  s.version      = "0.0.2"
   s.summary      = "基于kvo的双向绑定"
   s.description  = <<-DESC
 			基于kvo的双向绑定
