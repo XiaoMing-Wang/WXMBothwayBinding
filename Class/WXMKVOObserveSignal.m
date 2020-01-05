@@ -42,6 +42,7 @@
         if (target && keyPath) [target addObserverBlockForKeyPath:keyPath signal:self];
     }
     
+    /** 数组添加kvo监听 */
     WXMPreventCrashBegin
     id object = [target valueForKey:keyPath];
     if ([object isKindOfClass:NSMutableArray.class] && target && object) {
@@ -122,7 +123,6 @@
 - (WXMKVOObserveSignal *)map:(id (^)(id newVal))wrap {
     WXMPreventCrashBegin
     WXMKVOObserveSignal *wrapSignal = [[WXMKVOObserveSignal alloc] init];
-    
     [self subscribeNext:^(id newVal) {
         [wrapSignal sendSignal:wrap(newVal)];
     }];
@@ -135,10 +135,8 @@
     WXMPreventCrashBegin
     WXMKVOObserveSignal *filterSignal = [[WXMKVOObserveSignal alloc] init];
     [self subscribeNext:^(id newVal) {
-        
         BOOL conversionObj = wrap(newVal);
         if (conversionObj) [filterSignal sendSignal:newVal];
-        
     }];
     return filterSignal;
     WXMPreventCrashEnd
@@ -149,14 +147,12 @@
     WXMPreventCrashBegin
     WXMKVOObserveSignal *skipSignal = [[WXMKVOObserveSignal alloc] init];
     
-    __weak typeof(self) weakSelf = self;
+    __weak typeof(self) self_weak = self;
     [self subscribeNext:^(id newVal) {
-        
-        __strong __typeof(weakSelf) strongSelf = weakSelf;
-        if (skipCount < strongSelf.sendCount) {
+        __strong __typeof(self_weak) self = self_weak;
+        if (skipCount < self.sendCount) {
             [skipSignal sendSignal:newVal];
         }
-        
     }];
     return skipSignal;
     WXMPreventCrashEnd
@@ -167,12 +163,10 @@
     WXMPreventCrashBegin
     WXMKVOObserveSignal *changeSignal = [[WXMKVOObserveSignal alloc] init];
     
-    __weak typeof(self) weakSelf = self;
+    __weak typeof(self) self_weak = self;
     [self subscribeNext:^(id newVal) {
-        
-        __strong __typeof(weakSelf) strongSelf = weakSelf;
-        if (strongSelf.isEqualValue == NO) [changeSignal sendSignal:newVal];
-        
+        __strong __typeof(self_weak) self = self_weak;
+        if (self.isEqualValue == NO) [changeSignal sendSignal:newVal];
     }];
     
     return changeSignal;
@@ -184,12 +178,10 @@
     WXMPreventCrashBegin
     WXMKVOObserveSignal *manualSignal = [[WXMKVOObserveSignal alloc] init];
     
-    __weak typeof(self) weakSelf = self;
+    __weak typeof(self) self_weak = self;
     [self subscribeNext:^(id newVal) {
-        
-        __strong __typeof(weakSelf) strongSelf = weakSelf;
-        if (strongSelf.isManualTrigger) [manualSignal sendSignal:newVal];
-        
+        __strong __typeof(self_weak) self = self_weak;
+        if (self.isManualTrigger) [manualSignal sendSignal:newVal];
     }];
     
     return manualSignal;
@@ -202,7 +194,6 @@
     WXMKVOObserveSignal *cSignal = [[WXMKVOObserveSignal alloc] init];
     cSignal.isColdSignal = YES;
     cSignal.oldObject = [self.target valueForKey:self.keyPath];
-    
     [self subscribeNext:^(id newVal) {
         [cSignal sendSignal:newVal];
     }];

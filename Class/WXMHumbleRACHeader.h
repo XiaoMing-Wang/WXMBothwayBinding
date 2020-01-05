@@ -10,10 +10,10 @@
 #define WXMKVOBindHeader_h
 
 #import "WXMHumbleRACMacro.h"
-#import "NSMutableArray+WXMAddForKVO.h"
 #import "WXMKVOObserveSignal.h"
 #import "WXMKVOObserveFollower.h"
 #import "WXMKVOBindChannel.h"
 #import "NSObject+WXMAddForKVO.h"
+#import "NSMutableArray+WXMAddForKVO.h"
 
 #endif /* WXMKVOBindHeader_h */

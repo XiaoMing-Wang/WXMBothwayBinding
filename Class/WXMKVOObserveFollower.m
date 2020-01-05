@@ -42,13 +42,13 @@
 /** callback */
 - (KVOCallBack)subscribeBlock {
        
-    __weak typeof(self) weakSelf = self;
+    __weak typeof(self) self_weak = self;
     return ^(id newVal) {
         WXMPreventCrashBegin
         
-        __strong __typeof(weakSelf) strongSelf = weakSelf;
-        id target = strongSelf.target;
-        NSString *keyPath = strongSelf.keyPath;
+        __strong __typeof(self_weak) self = self_weak;
+        id target = self.target;
+        NSString *keyPath = self.keyPath;
         
         if (target && keyPath && newVal) {
             if ([[target class].wc_getFropertys containsObject:keyPath]) {

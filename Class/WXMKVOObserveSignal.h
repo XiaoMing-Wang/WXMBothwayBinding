@@ -15,6 +15,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/** 监听数组要使用 kvo_addObject kvo_addObjectsFromArray  kvo_setArray 才会回调 */
 @interface WXMKVOObserveSignal : NSObject
 
 /** 强引用 */
