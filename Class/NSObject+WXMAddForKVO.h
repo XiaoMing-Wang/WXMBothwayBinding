@@ -5,9 +5,11 @@
 //  Created by edz on 2019/7/26.
 //  Copyright © 2019 wq. All rights reserved.
 //
-#define WRKVOManualTrigger(TARGET, KEYPATH) \
-[NSObject manualTriggerObserveSignal:(TARGET) keyPath:@wxmkeypath(TARGET, KEYPATH)];
+/** 手动的触发信号 */
+#define WRCallObserveSignal(TARGET, KEYPATH) \
+[NSObject callObserveSignal:(TARGET) keyPath:@wxmkeypath(TARGET, KEYPATH)];
 
+/** 手动的删除信号 */
 #define WRDeleteObserverForKeyPath(TARGET, KEYPATH) \
 [TARGET removeObserverForKeyPath:@wxmkeypath(TARGET, KEYPATH)];
 
@@ -46,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)isEqualValue:(id)object;
 
 /** 手动触发信号 */
-+ (void)manualTriggerObserveSignal:(NSObject *)object keyPath:(NSString *)keyPath;
++ (void)callObserveSignal:(NSObject *)object keyPath:(NSString *)keyPath;
 
 /** 获取所有属性 */
 + (NSArray *)wc_getFropertys;

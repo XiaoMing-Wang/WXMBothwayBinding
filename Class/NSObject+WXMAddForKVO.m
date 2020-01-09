@@ -106,7 +106,7 @@
 }
 
 /** 手动触发信号 */
-+ (void)manualTriggerObserveSignal:(NSObject *)object keyPath:(NSString *)keyPath {
++ (void)callObserveSignal:(NSObject *)object keyPath:(NSString *)keyPath {
     WXMPreventCrashBegin
     
     NSMutableDictionary *dic = object.signDictionary;
