@@ -18,8 +18,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)kvo_addObject:(id)anObject;
 - (void)kvo_addObjectsFromArray:(NSArray *)otherArray;
 
+- (void)kvo_insertObject:(id)anObject atIndex:(NSUInteger)index;
+
 - (void)kvo_removeLastObject;
 - (void)kvo_removeAllObjects;
+- (void)kvo_removeObject:(id)anObject;
 - (void)kvo_removeObjectAtIndex:(NSUInteger)index;
 
 /** 替换 */

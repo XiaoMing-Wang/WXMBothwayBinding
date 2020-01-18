@@ -49,6 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** 手动触发信号 */
 + (void)callObserveSignal:(NSObject *)object keyPath:(NSString *)keyPath;
+- (void)callObserveSignalWithKeyPath:(NSString *)keyPath;
 
 /** 获取所有属性 */
 + (NSArray *)wc_getFropertys;

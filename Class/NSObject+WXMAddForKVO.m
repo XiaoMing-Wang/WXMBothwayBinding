@@ -105,6 +105,10 @@
     
 }
 
+- (void)callObserveSignalWithKeyPath:(NSString *)keyPath {
+    [NSObject callObserveSignal:self keyPath:keyPath];
+}
+
 /** 手动触发信号 */
 + (void)callObserveSignal:(NSObject *)object keyPath:(NSString *)keyPath {
     WXMPreventCrashBegin

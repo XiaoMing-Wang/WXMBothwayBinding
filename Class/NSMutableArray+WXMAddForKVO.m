@@ -35,6 +35,13 @@ static char kvo_propertyKey;
     }];
 }
 
+- (void)kvo_insertObject:(id)anObject atIndex:(NSUInteger)index {
+    if (self.count < index) return;
+    [self kvo_listeningObserver:^{
+        [self insertObject:anObject atIndex:index];
+    }];
+}
+
 - (void)kvo_removeLastObject {
     [self kvo_listeningObserver:^{
         [self removeLastObject];
@@ -44,6 +51,13 @@ static char kvo_propertyKey;
 - (void)kvo_removeAllObjects {
     [self kvo_listeningObserver:^{
         [self removeAllObjects];
+    }];
+}
+
+- (void)kvo_removeObject:(id)anObject {
+    if (!anObject) return;
+    [self kvo_listeningObserver:^{
+        [self removeObject:anObject];
     }];
 }
 

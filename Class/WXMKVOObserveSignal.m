@@ -88,6 +88,7 @@
 
 /** 发出 */
 - (void)sendSignal:(id)newVal {
+    self.isManualTrigger = NO;
     for (KVOCallBack callback in self.callbackArray) {
         if (callback) callback(newVal);
     }
