@@ -49,6 +49,13 @@
         NSMutableArray *array = (NSMutableArray *) object;
         [array kvo_setObserver:target keyPath:keyPath];
     }
+    
+    /** 监听 TextField */
+    if ([target isKindOfClass:UITextField.class] && target && object) {
+        UITextField *textField = (UITextField *) target;
+        [textField kvo_addTargetForAllEditingEvents];
+    }
+    
     WXMPreventCrashEnd
     return self;
 }

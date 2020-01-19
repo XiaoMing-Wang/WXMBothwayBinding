@@ -6,6 +6,7 @@
 //  Copyright © 2019 wq. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -28,6 +29,12 @@ NS_ASSUME_NONNULL_BEGIN
 /** 替换 */
 - (void)kvo_setArray:(NSArray *)otherArray;
 - (void)kvo_replaceArray:(NSArray *)otherArray;
+
+@end
+
+@interface UITextField (WXMAddForKVO)
+
+- (void)kvo_addTargetForAllEditingEvents;
 
 @end
 
