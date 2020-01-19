@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)callObserveSignalWithKeyPath:(NSString *)keyPath;
 
 /** 获取所有属性 */
-+ (NSArray *)wc_getFropertys;
++ (NSArray *)wcb_getFropertys;
 
 @end
 

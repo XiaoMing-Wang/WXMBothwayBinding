@@ -51,7 +51,7 @@
         NSString *keyPath = self.keyPath;
         
         if (target && keyPath && newVal) {
-            if ([[target class].wc_getFropertys containsObject:keyPath]) {
+            if ([[target class].wcb_getFropertys containsObject:keyPath]) {
                 [target setValue:newVal forKey:keyPath];
             } else {
                 SEL selector = NSSelectorFromString(keyPath);
