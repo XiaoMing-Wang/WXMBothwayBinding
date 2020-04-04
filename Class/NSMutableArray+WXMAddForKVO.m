@@ -109,7 +109,9 @@ static char kvo_propertyKey;
 @implementation UITextField (WXMAddForKVO)
 
 - (void)kvo_addTargetForAllEditingEvents {
-    [self addTarget:self action:@selector(kvo_textFieldDidChange) forControlEvents:UIControlEventAllEditingEvents];
+    [self addTarget:self
+             action:@selector(kvo_textFieldDidChange)
+   forControlEvents:UIControlEventAllEditingEvents];
 }
 
 - (void)kvo_textFieldDidChange {
