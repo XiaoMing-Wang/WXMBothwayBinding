@@ -14,10 +14,10 @@
 @property (nonatomic, assign) BOOL isManualTrigger; /** 手动触发 */
 @property (nonatomic, assign) BOOL isColdSignal;    /** 是否冷信号 */
 @property (nonatomic, assign) NSInteger sendCount;  /** 触发次数 */
-@property (nonatomic, weak) NSObject *target;
 @property (nonatomic, weak) id oldObject;
+@property (nonatomic, weak) NSObject *target;
 @property (nonatomic, copy) NSString *keyPath;
-@property (nonatomic, strong) NSMutableArray <KVOCallBack>*callbackArray;
+@property (nonatomic, strong) NSMutableArray<KVOCallBack> *callbackArray;
 @end
 
 @implementation WXMKVOObserveSignal
@@ -25,24 +25,26 @@
 - (instancetype)initWithTarget:(__weak NSObject *)target keyPath:(NSString *)keyPath {
     self = [self initWeakWithTarget:target keyPath:keyPath];
     
-    /** 把signal绑定到监听对象target上 否则block被释放 */
+    /** 把WXMKVOObserveSignal绑定到监听对象上target 否则block被释放 */
     if (target && keyPath) [target addSignal:self keyPath:keyPath];
     
     return self;
 }
 
 - (instancetype)initWeakWithTarget:(__weak NSObject *)target keyPath:(NSString *)keyPath {
+    
     if (target == nil || keyPath == nil) return nil;
     if (self = [super init])  {
         self.sendCount = 0;
         self.target = target;
         self.keyPath = keyPath.copy;
         
-        /** signal作为kvo的监听者 */
+        /** self作为kvo的监听者 */
+        /** self作为kvo的监听者 */
+        /** self作为kvo的监听者 */
         if (target && keyPath) [target addObserverBlockForKeyPath:keyPath signal:self];
     }
     
-    /** 数组添加kvo监听 */
     WXMPreventCrashBegin
     id object = [target valueForKey:keyPath];
     if ([object isKindOfClass:NSMutableArray.class] && target && object) {
@@ -50,8 +52,7 @@
         [array kvo_setObserver:target keyPath:keyPath];
     }
     
-    /** 监听 TextField */
-    if ([target isKindOfClass:UITextField.class] && [keyPath isEqualToString:@"text"]) {
+    if ([target isKindOfClass:[UITextField class]]) {
         UITextField *textField = (UITextField *) target;
         [textField kvo_addTargetForAllEditingEvents];
     }
@@ -65,7 +66,6 @@
                       ofObject:(id)object
                         change:(NSDictionary *)change
                        context:(void *)context {
-    
     if (self.callbackArray.count == 0 || !self.callbackArray) return;
     BOOL isPrior = [[change objectForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue];
     if (isPrior) return;
@@ -95,7 +95,6 @@
 
 /** 发出 */
 - (void)sendSignal:(id)newVal {
-    self.isManualTrigger = NO;
     for (KVOCallBack callback in self.callbackArray) {
         if (callback) callback(newVal);
     }
@@ -123,7 +122,7 @@
         [allBackArray addObjectsFromArray:self.callbackArray];
         [allBackArray addObjectsFromArray:otherSignal.callbackArray];
         self.callbackArray = allBackArray.mutableCopy;
-        if (otherSignal) otherSignal.callbackArray = allBackArray.mutableCopy;
+        otherSignal.callbackArray = allBackArray.mutableCopy;
     }
 }
 
@@ -131,6 +130,7 @@
 - (WXMKVOObserveSignal *)map:(id (^)(id newVal))wrap {
     WXMPreventCrashBegin
     WXMKVOObserveSignal *wrapSignal = [[WXMKVOObserveSignal alloc] init];
+    
     [self subscribeNext:^(id newVal) {
         [wrapSignal sendSignal:wrap(newVal)];
     }];
@@ -143,8 +143,10 @@
     WXMPreventCrashBegin
     WXMKVOObserveSignal *filterSignal = [[WXMKVOObserveSignal alloc] init];
     [self subscribeNext:^(id newVal) {
+        
         BOOL conversionObj = wrap(newVal);
         if (conversionObj) [filterSignal sendSignal:newVal];
+        
     }];
     return filterSignal;
     WXMPreventCrashEnd
@@ -155,12 +157,14 @@
     WXMPreventCrashBegin
     WXMKVOObserveSignal *skipSignal = [[WXMKVOObserveSignal alloc] init];
     
-    __weak typeof(self) self_weak = self;
+    __weak typeof(self) weakSelf = self;
     [self subscribeNext:^(id newVal) {
-        __strong __typeof(self_weak) self = self_weak;
-        if (skipCount < self.sendCount) {
+        
+        __strong __typeof(weakSelf) strongSelf = weakSelf;
+        if (skipCount < strongSelf.sendCount) {
             [skipSignal sendSignal:newVal];
         }
+        
     }];
     return skipSignal;
     WXMPreventCrashEnd
@@ -171,10 +175,12 @@
     WXMPreventCrashBegin
     WXMKVOObserveSignal *changeSignal = [[WXMKVOObserveSignal alloc] init];
     
-    __weak typeof(self) self_weak = self;
+    __weak typeof(self) weakSelf = self;
     [self subscribeNext:^(id newVal) {
-        __strong __typeof(self_weak) self = self_weak;
-        if (self.isEqualValue == NO) [changeSignal sendSignal:newVal];
+        
+        __strong __typeof(weakSelf) strongSelf = weakSelf;
+        if (strongSelf.isEqualValue == NO) [changeSignal sendSignal:newVal];
+        
     }];
     
     return changeSignal;
@@ -186,10 +192,12 @@
     WXMPreventCrashBegin
     WXMKVOObserveSignal *manualSignal = [[WXMKVOObserveSignal alloc] init];
     
-    __weak typeof(self) self_weak = self;
+    __weak typeof(self) weakSelf = self;
     [self subscribeNext:^(id newVal) {
-        __strong __typeof(self_weak) self = self_weak;
-        if (self.isManualTrigger) [manualSignal sendSignal:newVal];
+        
+        __strong __typeof(weakSelf) strongSelf = weakSelf;
+        if (strongSelf.isManualTrigger) [manualSignal sendSignal:newVal];
+        
     }];
     
     return manualSignal;
@@ -202,6 +210,7 @@
     WXMKVOObserveSignal *cSignal = [[WXMKVOObserveSignal alloc] init];
     cSignal.isColdSignal = YES;
     cSignal.oldObject = [self.target valueForKey:self.keyPath];
+    
     [self subscribeNext:^(id newVal) {
         [cSignal sendSignal:newVal];
     }];
@@ -215,7 +224,7 @@
     return _callbackArray;
 }
 
-- (void)dealloc {
-    /** NSLog(@"%@", @"dealloc"); */
-}
+//- (void)dealloc {
+//    /** NSLog(@"%@", @"dealloc"); */
+//}
 @end

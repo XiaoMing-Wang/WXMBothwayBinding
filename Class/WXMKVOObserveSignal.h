@@ -20,8 +20,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** 强引用 */
 - (instancetype)initWithTarget:(__weak NSObject *)target keyPath:(NSString *)keyPath;
-
-/** 弱引用 */
 - (instancetype)initWeakWithTarget:(__weak NSObject *)target keyPath:(NSString *)keyPath;
 
 /** 订阅 */

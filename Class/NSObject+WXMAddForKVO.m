@@ -4,7 +4,7 @@
 //
 //  Created by edz on 2019/7/26.
 //  Copyright © 2019 wq. All rights reserved.
-#import <UIKit/UIKit.h>
+
 #import <objc/objc.h>
 #import <objc/runtime.h>
 #import "NSObject+WXMAddForKVO.h"
@@ -26,9 +26,9 @@
               options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
               context:NULL];
     
-    if ([[UIDevice currentDevice] systemVersion].floatValue < 11.0) {
-        [self managerObserveSignalDealloc];
-    }
+    //if ([[UIDevice currentDevice] systemVersion].floatValue < 11.0) {
+    //[self managerObserveSignalDealloc];
+    //}
     WXMPreventCrashEnd
 }
 
@@ -105,12 +105,8 @@
     
 }
 
-- (void)callObserveSignalWithKeyPath:(NSString *)keyPath {
-    [NSObject callObserveSignal:self keyPath:keyPath];
-}
-
 /** 手动触发信号 */
-+ (void)callObserveSignal:(NSObject *)object keyPath:(NSString *)keyPath {
++ (void)manualTriggerObserveSignal:(NSObject *)object keyPath:(NSString *)keyPath {
     WXMPreventCrashBegin
     
     NSMutableDictionary *dic = object.signDictionary;
@@ -129,6 +125,8 @@
     
     __block SEL serviceDeallocSEL = NSSelectorFromString(@"observeSignalDealloc");
     if ([self respondsToSelector:serviceDeallocSEL]) return;
+    if (!self) return;
+    if (!serviceDeallocSEL) return;
     
     id serviceDealloc = ^(__unsafe_unretained id dependInstance) {
 #pragma clang diagnostic push
@@ -200,17 +198,4 @@
     return NO;
 }
 
-/** 获取所有属性 */
-+ (NSArray *)wcb_getFropertys {
-    unsigned int count = 0;
-    NSMutableArray *_arrayM = @[].mutableCopy;
-    objc_property_t *propertys = class_copyPropertyList([self class], &count);
-    for (int i = 0; i < count; i++) {
-        objc_property_t property = propertys[i]; /** 获得每一个属性 */
-        NSString *pro = [NSString stringWithCString:property_getName(property)
-                                           encoding:NSUTF8StringEncoding];
-        [_arrayM addObject:pro];
-    }
-    return _arrayM;
-}
 @end

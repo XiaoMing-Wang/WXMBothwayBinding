@@ -23,14 +23,15 @@
 
 - (void)setObject:(WXMKVOObserveSignal *)signal forKeyedSubscript:(NSString *)keyPath {
     WXMPreventCrashBegin
-    
     self.keyPath = [keyPath copy];
     
     /** A对象强引用 WXMKVOSubscriptingTrampoline 否则subscribeBlock被释放了 */
     if (self.target) [self.target addSubscrip:self keyPath:keyPath];
     
     /** 订阅信号 B的信号A也订阅一次 B有变动就会调起A的block */
-    if (signal && keyPath && self.target) [signal subscribeNext:self.subscribeBlock];
+    if (signal && keyPath && self.target){
+        [signal subscribeNext:self.subscribeBlock];
+    }
     
     WXMPreventCrashEnd
 }
@@ -40,24 +41,33 @@
 #pragma clang diagnostic ignored "-Wundeclared-selector"
 
 /** callback */
+/** callback */
+/** callback */
 - (KVOCallBack)subscribeBlock {
        
-    __weak typeof(self) self_weak = self;
+    __weak typeof(self) weakSelf = self;
     return ^(id newVal) {
         WXMPreventCrashBegin
         
-        __strong __typeof(self_weak) self = self_weak;
-        id target = self.target;
-        NSString *keyPath = self.keyPath;
-        
+        __strong __typeof(weakSelf) strongSelf = weakSelf;
+        id target = strongSelf.target;
+        NSString *keyPath = strongSelf.keyPath;
+        id value = [target valueForKey:keyPath];
+        if ([value isEqualValue:newVal] || (newVal == nil && value == nil)) return;
+             
         if (target && keyPath && newVal) {
-            if ([[target class].wcb_getFropertys containsObject:keyPath]) {
-                [target setValue:newVal forKey:keyPath];
-            } else {
-                SEL selector = NSSelectorFromString(keyPath);
-                if ([target respondsToSelector:selector]) {
-                    [target performSelector:selector];
-                }
+            
+            /** setValue不存在的属性设置不会崩溃 */
+            /** setValue不存在的属性设置不会崩溃 */
+            /** setValue不存在的属性设置不会崩溃 */
+            [target setValue:newVal forKey:keyPath];
+            
+            /** 如果这个是函数的话 */
+            /** 如果这个是函数的话 */
+            /** 如果这个是函数的话 */
+            SEL selector = NSSelectorFromString(keyPath);
+            if ([target respondsToSelector:selector] && selector) {
+                [target performSelector:selector];
             }
         }
         

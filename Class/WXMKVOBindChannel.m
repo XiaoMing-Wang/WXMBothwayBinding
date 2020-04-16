@@ -41,25 +41,40 @@
 
 - (KVOCallBack)subscribeBlock {
     
-    __weak typeof(self) self_weak = self;
+    __weak typeof(self) weakSelf = self;
     return ^(id newVal) {
         WXMPreventCrashBegin
         
-        __strong __typeof(self_weak) self = self_weak;
-        id target = self.target;
-        NSString *keyPath = self.keyPath;
-        if (![keyPath hasPrefix:@"_"]) {
-            keyPath = [@"_" stringByAppendingString:keyPath];
-        }
+        __strong __typeof(weakSelf) strongSelf = weakSelf;
+        id target = strongSelf.target;
+        NSString *keyPath = strongSelf.keyPath;
+        id value = [target valueForKey:keyPath];
+        if ([value isEqualValue:newVal] || (newVal == nil && value == nil)) return;
+        if (![keyPath hasPrefix:@"_"]) keyPath = [@"_" stringByAppendingString:keyPath];
+        if (!target || !keyPath) return;
         
-        /** 修改_不会触发kvo */
-        if (!target) return;
+        /** 修改带_不会触发kvo 但是系统的某些变量有时获取不到 比如textFile的text */
+        /** 修改带_不会触发kvo 但是系统的某些变量有时获取不到 比如textFile的text */
+        /** 修改带_不会触发kvo 但是系统的某些变量有时获取不到 比如textFile的text */
         const char *ivarKey = [keyPath UTF8String];
         Ivar ivar = class_getInstanceVariable([target class], ivarKey);
         if (target && ivar && newVal) {
+            
+            
             @synchronized (target) {
                 object_setIvar(target, ivar, newVal);
             }
+            
+            /** UITextField的设置text不会调用kvo功能 需要自己设置 UITextField和NSArray需要特殊处理 */
+            /** UITextField的设置text设置不会调用kvo功能 需要自己设置 UITextField和NSArray需要特殊处理 */
+            /** UITextField的设置text设置不会调用kvo功能 需要自己设置 UITextField和NSArray需要特殊处理 */
+        } else if (target && !ivar && newVal && [target isKindOfClass:UITextField.class] && [keyPath isEqualToString:@"_text"]) {
+            
+            @synchronized (target) {
+                UITextField *textField = (UITextField *)target;
+                textField.text = newVal;
+            }
+            
         }
         
         WXMPreventCrashEnd
