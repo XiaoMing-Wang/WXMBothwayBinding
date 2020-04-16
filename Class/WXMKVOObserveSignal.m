@@ -51,7 +51,7 @@
     }
     
     /** 监听 TextField */
-    if ([target isKindOfClass:UITextField.class] && target && object) {
+    if ([target isKindOfClass:UITextField.class] && [keyPath isEqualToString:@"text"]) {
         UITextField *textField = (UITextField *) target;
         [textField kvo_addTargetForAllEditingEvents];
     }
