@@ -65,10 +65,10 @@
                 object_setIvar(target, ivar, newVal);
             }
             
-            /** UITextField的设置text不会调用kvo功能 需要自己设置 UITextField和NSArray需要特殊处理 */
             /** UITextField的设置text设置不会调用kvo功能 需要自己设置 UITextField和NSArray需要特殊处理 */
             /** UITextField的设置text设置不会调用kvo功能 需要自己设置 UITextField和NSArray需要特殊处理 */
-        } else if (target && !ivar && newVal && [target isKindOfClass:UITextField.class] && [keyPath isEqualToString:@"_text"]) {
+            /** UITextField的设置text设置不会调用kvo功能 需要自己设置 UITextField和NSArray需要特殊处理 */
+        } else if ([target isKindOfClass:UITextField.class] && [keyPath isEqualToString:@"_text"]) {
             
             @synchronized (target) {
                 UITextField *textField = (UITextField *)target;

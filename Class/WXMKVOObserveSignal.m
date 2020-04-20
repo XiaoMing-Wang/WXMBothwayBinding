@@ -224,7 +224,4 @@
     return _callbackArray;
 }
 
-//- (void)dealloc {
-//    /** NSLog(@"%@", @"dealloc"); */
-//}
 @end
