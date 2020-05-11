@@ -126,6 +126,24 @@
     }
 }
 
+/** 信号合并 */
+- (WXMKVOObserveSignal *)reCombineSignal:(WXMKVOObserveSignal *)otherSignal {
+    WXMPreventCrashBegin
+    @synchronized (self) {
+        WXMKVOObserveSignal *reCombinesignal = [[WXMKVOObserveSignal alloc] init];
+        
+        [self subscribeNext:^(id newVal) {
+            [reCombinesignal sendSignal:nil];
+        }];
+        
+        [otherSignal subscribeNext:^(id newVal) {
+            [reCombinesignal sendSignal:nil];
+        }];
+        return reCombinesignal;
+    }
+    WXMPreventCrashEnd
+}
+
 /** 包装信号 */
 - (WXMKVOObserveSignal *)map:(id (^)(id newVal))wrap {
     WXMPreventCrashBegin
@@ -222,6 +240,10 @@
 - (NSMutableArray<KVOCallBack> *)callbackArray {
     if (!_callbackArray) _callbackArray = @[].mutableCopy;
     return _callbackArray;
+}
+
+- (void)dealloc {
+    /** NSLog(@"-----------> %@", @"WXMKVOObserveSignal被释放"); */
 }
 
 @end

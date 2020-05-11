@@ -9,6 +9,8 @@
 #define WRObserve(TARGET, KEYPATH) \
 [[WXMKVOObserveSignal alloc] initWithTarget:(TARGET) keyPath:@wxmkeypath(TARGET, KEYPATH)]
 
+#define WRMerge(signalA, signalB) [signalA reCombineSignal:signalB] 
+
 /** 信号 */
 #import "WXMHumbleRACMacro.h"
 #import <Foundation/Foundation.h>
@@ -34,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 /** 跳跃 */
 - (WXMKVOObserveSignal *)skip:(NSInteger)skipCount;
 
-/** 变化 */
+/** 变化才回调 */
 - (WXMKVOObserveSignal *)distinctUntilChanged;
 
 /** 只能手动触发 */
@@ -45,6 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** 合并信号 */
 - (void)combineSignal:(WXMKVOObserveSignal *)otherSignal;
+- (WXMKVOObserveSignal *)reCombineSignal:(WXMKVOObserveSignal *)otherSignal;
 
 /** 触发 */
 - (void)manualTriggerSignal:(id)newVal;

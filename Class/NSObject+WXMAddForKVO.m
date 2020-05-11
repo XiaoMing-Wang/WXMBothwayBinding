@@ -32,7 +32,7 @@
     WXMPreventCrashEnd
 }
 
-- (void)addSignal:(WXMKVOObserveSignal *)observeSignal keyPath:(NSString *)keyPath; {
+- (void)addSignal:(WXMKVOObserveSignal *)observeSignal keyPath:(NSString *)keyPath {
     WXMPreventCrashBegin
     
     NSMutableDictionary *dic = self.signDictionary;
