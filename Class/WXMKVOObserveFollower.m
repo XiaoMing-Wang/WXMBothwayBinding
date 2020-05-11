@@ -41,8 +41,6 @@
 #pragma clang diagnostic ignored "-Wundeclared-selector"
 
 /** callback */
-/** callback */
-/** callback */
 - (KVOCallBack)subscribeBlock {
        
     __weak typeof(self) weakSelf = self;
@@ -76,4 +74,5 @@
 }
 
 #pragma clang diagnostic pop
+
 @end

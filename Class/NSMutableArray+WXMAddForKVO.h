@@ -34,8 +34,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UITextField (WXMAddForKVO)
 
+- (WXMKVOObserveSignal *)wr_textSignal;
 - (void)kvo_addTargetForAllEditingEvents;
 
 @end
+
 
 NS_ASSUME_NONNULL_END

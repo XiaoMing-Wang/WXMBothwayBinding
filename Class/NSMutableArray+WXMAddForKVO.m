@@ -6,8 +6,9 @@
 //  Copyright © 2019 wq. All rights reserved.
 //
 #import <objc/runtime.h>
-#import "NSMutableArray+WXMAddForKVO.h"
 #import "WXMHumbleRACMacro.h"
+#import "WXMKVOObserveSignal.h"
+#import "NSMutableArray+WXMAddForKVO.h"
 
 static char kvo_observerKey;
 static char kvo_propertyKey;
@@ -108,10 +109,13 @@ static char kvo_propertyKey;
 
 @implementation UITextField (WXMAddForKVO)
 
+- (WXMKVOObserveSignal *)wr_textSignal {
+    [self kvo_addTargetForAllEditingEvents];
+    return WRObserve(self, text);
+}
+
 - (void)kvo_addTargetForAllEditingEvents {
-    [self addTarget:self
-             action:@selector(kvo_textFieldDidChange)
-   forControlEvents:UIControlEventAllEditingEvents];
+    [self addTarget:self action:@selector(kvo_textFieldDidChange) forControlEvents:UIControlEventAllEditingEvents];
 }
 
 - (void)kvo_textFieldDidChange {
@@ -121,3 +125,4 @@ static char kvo_propertyKey;
 
 
 @end
+
