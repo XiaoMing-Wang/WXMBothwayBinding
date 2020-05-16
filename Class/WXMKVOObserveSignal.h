@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (WXMKVOObserveSignal *)distinctUntilChanged;
 
 /** 只能手动触发 */
-- (WXMKVOObserveSignal *)manualTrigger;
+- (WXMKVOObserveSignal *)didChangeManual;
 
 /** 冷信号 订阅既发 */
 - (WXMKVOObserveSignal *)coldSignal;

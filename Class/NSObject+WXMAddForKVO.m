@@ -106,14 +106,16 @@
 }
 
 /** 手动触发信号 */
-+ (void)manualTriggerObserveSignal:(NSObject *)object keyPath:(NSString *)keyPath {
+- (void)didChangeManualWithSignalKeyPath:(NSString *)keyPath value:(id)value {
     WXMPreventCrashBegin
     
-    NSMutableDictionary *dic = object.signDictionary;
+    if (!keyPath) return;
+    [self setValue:value forKey:keyPath];
+    NSMutableDictionary *dic = self.signDictionary;
     NSMutableArray <WXMKVOObserveSignal *>*array = dic[keyPath];
-    id newVal = [object valueForKey:keyPath];
+    id newVal = [self valueForKey:keyPath];
     [array enumerateObjectsUsingBlock:^(WXMKVOObserveSignal *obj, NSUInteger idx, BOOL *stop) {
-        [obj manualTriggerSignal:newVal];
+       [obj manualTriggerSignal:newVal];
     }];
     
     WXMPreventCrashEnd

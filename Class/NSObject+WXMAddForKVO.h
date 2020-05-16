@@ -5,8 +5,8 @@
 //  Created by edz on 2019/7/26.
 //  Copyright © 2019 wq. All rights reserved.
 //
-#define WRKVOManualTrigger(TARGET, KEYPATH) \
-[NSObject manualTriggerObserveSignal:(TARGET) keyPath:@wxmkeypath(TARGET, KEYPATH)];
+#define WRDidChaneValueManual(TARGET, KEYPATH, VALUE) \
+[TARGET didChangeManualWithSignalKeyPath:(@wxmkeypath(TARGET, KEYPATH)) value: VALUE];
 
 #define WRDeleteObserverForKeyPath(TARGET, KEYPATH) \
 [TARGET removeObserverForKeyPath:@wxmkeypath(TARGET, KEYPATH)];
@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)isEqualValue:(id)object;
 
 /** 手动触发信号 */
-+ (void)manualTriggerObserveSignal:(NSObject *)object keyPath:(NSString *)keyPath;
+- (void)didChangeManualWithSignalKeyPath:(NSString *)keyPath value:(id)value;
 
 @end
 

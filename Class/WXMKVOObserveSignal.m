@@ -133,11 +133,11 @@
         WXMKVOObserveSignal *reCombinesignal = [[WXMKVOObserveSignal alloc] init];
         
         [self subscribeNext:^(id newVal) {
-            [reCombinesignal sendSignal:nil];
+            [reCombinesignal sendSignal:newVal];
         }];
         
         [otherSignal subscribeNext:^(id newVal) {
-            [reCombinesignal sendSignal:nil];
+            [reCombinesignal sendSignal:newVal];
         }];
         return reCombinesignal;
     }
@@ -206,7 +206,7 @@
 }
 
 /** 只能手动触发 */
-- (WXMKVOObserveSignal *)manualTrigger {
+- (WXMKVOObserveSignal *)didChangeManual {
     WXMPreventCrashBegin
     WXMKVOObserveSignal *manualSignal = [[WXMKVOObserveSignal alloc] init];
     
